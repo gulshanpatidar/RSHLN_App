@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "823841026095",
+    "project_id": "rshln-app",
+    "storage_bucket": "rshln-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:823841026095:android:b2359ee3fad398b481d6da",
+        "android_client_info": {
+          "package_name": "com.example.rshlnapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "823841026095-43vbedsr3udir0mimfeijq15fknslvq2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC8Rq7fX9lPqflppavz98gbj-GQqVdR6fI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "823841026095-43vbedsr3udir0mimfeijq15fknslvq2.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
