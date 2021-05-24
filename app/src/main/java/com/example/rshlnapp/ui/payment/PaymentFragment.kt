@@ -7,26 +7,20 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.example.rshlnapp.R
+import com.example.rshlnapp.databinding.PaymentFragmentBinding
 
 class PaymentFragment : Fragment() {
 
-    companion object {
-        fun newInstance() = PaymentFragment()
-    }
-
     private lateinit var viewModel: PaymentViewModel
+    private lateinit var binding: PaymentFragmentBinding
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.payment_fragment, container, false)
-    }
-
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
+        binding = PaymentFragmentBinding.inflate(inflater)
         viewModel = ViewModelProvider(this).get(PaymentViewModel::class.java)
-        // TODO: Use the ViewModel
+        return binding.root
     }
 
 }

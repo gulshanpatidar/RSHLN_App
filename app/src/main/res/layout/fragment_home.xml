@@ -25,7 +25,8 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:productListData="@{viewModel.products}" />
+            app:productListData="@{viewModel.products}"
+            tools:listitem="@layout/item_product"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </layout>

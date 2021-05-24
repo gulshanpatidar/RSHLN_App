@@ -38,14 +38,14 @@ class HomeViewModel : ViewModel() {
 
     init {
         _products.value = mProducts
-        retreiveAllProducts()
+        retrieveAllProducts()
     }
 
     fun addProduct(){
         _navigateToAddProduct.value = true
     }
 
-    private fun retreiveAllProducts(){
+    private fun retrieveAllProducts(){
         val productsCollection = FirebaseFirestore.getInstance().collection("products")
         viewModelScope.launch {
             try {

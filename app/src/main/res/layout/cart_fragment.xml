@@ -60,7 +60,8 @@
             app:layout_constraintBottom_toBottomOf="parent"
             android:padding="6dp"
             app:cartListData="@{viewModel.items}"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:listitem="@layout/item_product_cart"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

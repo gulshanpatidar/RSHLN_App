@@ -2,8 +2,10 @@ package com.example.rshlnapp
 
 import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.example.rshlnapp.adapters.AddressAdapter
 import com.example.rshlnapp.adapters.CartAdapter
 import com.example.rshlnapp.adapters.ProductAdapter
+import com.example.rshlnapp.models.Address
 import com.example.rshlnapp.models.CartItem
 import com.example.rshlnapp.models.Product
 

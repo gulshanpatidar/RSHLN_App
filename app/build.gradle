@@ -76,6 +76,8 @@ dependencies {
     implementation 'com.google.firebase:firebase-storage-ktx'
     //coil
     implementation 'io.coil-kt:coil:1.1.1'
+    //volley
+    implementation 'com.android.volley:volley:1.2.0'
 }
 
 // Adding the apply plugin statement for safeargs
