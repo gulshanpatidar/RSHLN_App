@@ -20,6 +20,7 @@ import com.example.rshlnapp.models.CartItem
 import com.example.rshlnapp.models.Product
 import com.example.rshlnapp.models.User
 import com.example.rshlnapp.ui.cart.CartFragment
+import com.example.rshlnapp.ui.choose_address.ChooseAddressFragment
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
@@ -49,7 +50,17 @@ class DetailFragment(val productId: String,val fromWhere: String) : Fragment() {
             addProductToCart(productId)
         }
 
+        binding.buyNowButton.setOnClickListener {
+            startCheckoutProcess()
+        }
+
         return binding.root
+    }
+
+    private fun startCheckoutProcess() {
+        val chooseAddressFragment = ChooseAddressFragment(this)
+        val currentFragment = this
+        requireActivity().supportFragmentManager.beginTransaction().add(R.id.nav_host_fragment_content_main,chooseAddressFragment,getString(R.string.title_choose_address_fragment)).hide(currentFragment).commit()
     }
 
     private fun addProductToCart(productId: String) {
