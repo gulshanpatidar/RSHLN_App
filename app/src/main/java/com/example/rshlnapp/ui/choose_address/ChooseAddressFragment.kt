@@ -5,6 +5,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import com.example.rshlnapp.MainActivity
@@ -43,7 +44,12 @@ class ChooseAddressFragment(val detailFragment: DetailFragment) : Fragment(), IC
         }
         //continue button action
         binding.deliverHereButtonChooseAddress.setOnClickListener {
-
+            val position = adapter.lastSelectedPosition
+            if (position<0){
+                Toast.makeText(requireContext(),"Please choose an address",Toast.LENGTH_SHORT).show()
+            }else{
+                Toast.makeText(requireContext(),"Chosen position is $position",Toast.LENGTH_SHORT).show()
+            }
         }
 
         return binding.root

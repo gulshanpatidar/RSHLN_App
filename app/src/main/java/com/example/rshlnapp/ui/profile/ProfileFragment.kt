@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.example.rshlnapp.MainActivity
 import com.example.rshlnapp.R
@@ -15,16 +16,18 @@ import com.example.rshlnapp.databinding.FragmentProfileBinding
 import com.example.rshlnapp.models.Address
 import com.example.rshlnapp.models.User
 import com.example.rshlnapp.ui.address.AddressFragment
+import com.example.rshlnapp.ui.edit_address.EditAddressFragment
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
+import okhttp3.internal.Util
 
 class ProfileFragment : Fragment(), IAddressAdapter {
 
     private lateinit var binding: FragmentProfileBinding
-    private lateinit var adapter: AddressAdapter
+    lateinit var adapter: AddressAdapter
     private lateinit var userDao: UserDao
 
     override fun onCreateView(
@@ -45,7 +48,7 @@ class ProfileFragment : Fragment(), IAddressAdapter {
         return binding.root
     }
 
-    private fun setupRecyclerView() {
+    fun setupRecyclerView() {
         GlobalScope.launch {
             val currentUser =
                 userDao.getUserById(Utils.currentUserId).await().toObject(User::class.java)!!
@@ -60,7 +63,7 @@ class ProfileFragment : Fragment(), IAddressAdapter {
     }
 
     private fun openAddressFragment() {
-        val addressFragment = AddressFragment()
+        val addressFragment = AddressFragment(this)
         val currentFragment = this
         requireActivity().supportFragmentManager.beginTransaction().add(
             R.id.nav_host_fragment_content_main,
@@ -71,10 +74,21 @@ class ProfileFragment : Fragment(), IAddressAdapter {
     }
 
     override fun onEditClicked(address: Address) {
-        TODO("Not yet implemented")
+        val currentFragment = this
+        val editAddressFragment = EditAddressFragment(this,address)
+        requireActivity().supportFragmentManager.beginTransaction().add(R.id.nav_host_fragment_content_main,editAddressFragment,getString(R.string.title_edit_address_fragment)).hide(currentFragment).commit()
+        (activity as MainActivity).setDrawerLocked(true)
     }
 
     override fun onDeleteClicked(address: Address) {
-        TODO("Not yet implemented")
+        GlobalScope.launch {
+            val currentUser = userDao.getUserById(Utils.currentUserId).await().toObject(User::class.java)!!
+            currentUser.addresses.remove(address)
+            userDao.updateProfile(currentUser)
+            withContext(Dispatchers.Main){
+                setupRecyclerView()
+                Toast.makeText(requireContext(),"Address deleted",Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 }

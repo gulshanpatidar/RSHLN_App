@@ -16,6 +16,7 @@ import com.example.rshlnapp.daos.UserDao
 import com.example.rshlnapp.databinding.AddressFragmentBinding
 import com.example.rshlnapp.models.Address
 import com.example.rshlnapp.models.User
+import com.example.rshlnapp.ui.profile.ProfileFragment
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -23,7 +24,7 @@ import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 
 
-class AddressFragment : Fragment() {
+class AddressFragment(val previousFragment: Fragment) : Fragment() {
 
     private lateinit var viewModel: AddressViewModel
     private lateinit var binding: AddressFragmentBinding
@@ -75,6 +76,7 @@ class AddressFragment : Fragment() {
         val currentFragment = this@AddressFragment
         requireActivity().supportFragmentManager.beginTransaction().remove(currentFragment)
             .show(profileFragment).commit()
+        (previousFragment as ProfileFragment).setupRecyclerView()
         (activity as MainActivity).supportActionBar?.title = "Your Profile"
         (activity as MainActivity).setDrawerLocked(false)
         (activity as MainActivity).supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -89,11 +91,16 @@ class AddressFragment : Fragment() {
                 override fun handleOnBackPressed() {
                     val profileFragment = (activity as MainActivity).activeFragment
                     val currentFragment = this@AddressFragment
-                    requireActivity().supportFragmentManager.beginTransaction()
-                        .remove(currentFragment).show(profileFragment).commit()
-                    (activity as MainActivity).supportActionBar?.title = "Your Profile"
-                    (activity as MainActivity).setDrawerLocked(false)
-                    (activity as MainActivity).supportActionBar?.setDisplayHomeAsUpEnabled(true)
+                    if (previousFragment==profileFragment){
+                        requireActivity().supportFragmentManager.beginTransaction()
+                            .remove(currentFragment).show(profileFragment).commit()
+                        (activity as MainActivity).supportActionBar?.title = "Your Profile"
+                        (activity as MainActivity).setDrawerLocked(false)
+                        (activity as MainActivity).supportActionBar?.setDisplayHomeAsUpEnabled(true)
+                    }else{
+                        requireActivity().supportFragmentManager.beginTransaction().remove(currentFragment).show(previousFragment).commit()
+                        (activity as MainActivity).supportActionBar?.title = "Choose an Address"
+                    }
                 }
             })
     }
