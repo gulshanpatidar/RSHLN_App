@@ -16,6 +16,7 @@ import com.example.rshlnapp.daos.UserDao
 import com.example.rshlnapp.databinding.AddressFragmentBinding
 import com.example.rshlnapp.models.Address
 import com.example.rshlnapp.models.User
+import com.example.rshlnapp.ui.choose_address.ChooseAddressFragment
 import com.example.rshlnapp.ui.profile.ProfileFragment
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -62,7 +63,7 @@ class AddressFragment(val previousFragment: Fragment) : Fragment() {
                 currentUser.addresses.add(address)
                 userDao.updateProfile(currentUser)
                 withContext(Dispatchers.Main) {
-                    goToProfileFragment()
+                    goToPreviousFragment()
                 }
             }
         } else {
@@ -71,16 +72,24 @@ class AddressFragment(val previousFragment: Fragment) : Fragment() {
         }
     }
 
-    private fun goToProfileFragment() {
+    private fun goToPreviousFragment() {
         val profileFragment = (activity as MainActivity).activeFragment
         val currentFragment = this@AddressFragment
-        requireActivity().supportFragmentManager.beginTransaction().remove(currentFragment)
-            .show(profileFragment).commit()
-        (previousFragment as ProfileFragment).setupRecyclerView()
-        (activity as MainActivity).supportActionBar?.title = "Your Profile"
-        (activity as MainActivity).setDrawerLocked(false)
-        (activity as MainActivity).supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        Toast.makeText(requireContext(), "Address added successfully", Toast.LENGTH_LONG).show()
+        if (previousFragment==profileFragment){
+            requireActivity().supportFragmentManager.beginTransaction().remove(currentFragment)
+                .show(profileFragment).commit()
+            (previousFragment as ProfileFragment).setupRecyclerView()
+            (activity as MainActivity).supportActionBar?.title = "Your Profile"
+            (activity as MainActivity).setDrawerLocked(false)
+            (activity as MainActivity).supportActionBar?.setDisplayHomeAsUpEnabled(true)
+            Toast.makeText(requireContext(), "Address added successfully", Toast.LENGTH_LONG).show()
+        }else{
+            requireActivity().supportFragmentManager.beginTransaction().remove(currentFragment)
+                .show(previousFragment).commit()
+            (previousFragment as ChooseAddressFragment).setupRecyclerView()
+            (activity as MainActivity).supportActionBar?.title = "Choose an address"
+            Toast.makeText(requireContext(), "Address added successfully", Toast.LENGTH_LONG).show()
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

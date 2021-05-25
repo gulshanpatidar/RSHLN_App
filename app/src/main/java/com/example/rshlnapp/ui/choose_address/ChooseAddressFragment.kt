@@ -16,6 +16,7 @@ import com.example.rshlnapp.adapters.IChooseAddressAdapter
 import com.example.rshlnapp.daos.UserDao
 import com.example.rshlnapp.databinding.ChooseAddressFragmentBinding
 import com.example.rshlnapp.models.User
+import com.example.rshlnapp.ui.address.AddressFragment
 import com.example.rshlnapp.ui.detail.DetailFragment
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -40,7 +41,9 @@ class ChooseAddressFragment(val detailFragment: DetailFragment) : Fragment(), IC
 
         //add new address button click listener
         binding.addNewAddressChooseAddress.setOnClickListener {
-
+            val currentFragment = this
+            val addressFragment = AddressFragment(currentFragment)
+            requireActivity().supportFragmentManager.beginTransaction().add(R.id.nav_host_fragment_content_main,addressFragment,getString(R.string.title_address_fragment)).hide(currentFragment).commit()
         }
         //continue button action
         binding.deliverHereButtonChooseAddress.setOnClickListener {
@@ -66,7 +69,7 @@ class ChooseAddressFragment(val detailFragment: DetailFragment) : Fragment(), IC
         })
     }
 
-    private fun setupRecyclerView() {
+    fun setupRecyclerView() {
         GlobalScope.launch {
             val currentUser =
                 userDao.getUserById(Utils.currentUserId).await().toObject(User::class.java)!!
