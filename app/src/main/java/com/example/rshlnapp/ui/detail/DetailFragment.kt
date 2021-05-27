@@ -16,6 +16,7 @@ import com.example.rshlnapp.Utils
 import com.example.rshlnapp.daos.ProductDao
 import com.example.rshlnapp.daos.UserDao
 import com.example.rshlnapp.databinding.DetailFragmentBinding
+import com.example.rshlnapp.models.Cart
 import com.example.rshlnapp.models.CartItem
 import com.example.rshlnapp.models.Product
 import com.example.rshlnapp.models.User
@@ -58,7 +59,12 @@ class DetailFragment(val productId: String,val fromWhere: String) : Fragment() {
     }
 
     private fun startCheckoutProcess() {
-        val chooseAddressFragment = ChooseAddressFragment(this)
+        //we need to paas a cart to the choose address fragment, and we don't have any cart here because we want to buy a single item here. so we will create instance of cart using that single element
+        val cartItem = CartItem(productId,1,product)
+        val cartItems = ArrayList<CartItem>()
+        cartItems.add(cartItem)
+        val cart = Cart(cartItems,product.productPrice)
+        val chooseAddressFragment = ChooseAddressFragment(this,cart)
         val currentFragment = this
         requireActivity().supportFragmentManager.beginTransaction().add(R.id.nav_host_fragment_content_main,chooseAddressFragment,getString(R.string.title_choose_address_fragment)).hide(currentFragment).commit()
     }
@@ -93,6 +99,7 @@ class DetailFragment(val productId: String,val fromWhere: String) : Fragment() {
         setHasOptionsMenu(true)
         requireActivity().onBackPressedDispatcher.addCallback(this,object: OnBackPressedCallback(true){
             override fun handleOnBackPressed() {
+                //either we came here from home fragment or from cart fragment
                 if (fromWhere=="HomeFragment"){
                     val homeFragment = (activity as MainActivity).activeFragment
                     val currentFragment = this@DetailFragment
@@ -123,7 +130,7 @@ class DetailFragment(val productId: String,val fromWhere: String) : Fragment() {
             }
             binding.productNameInDetail.text = product.productName
             binding.productDescriptionInDetail.text = product.description
-            binding.productPriceInDetail.setText(product.productPrice.toString())
+            binding.productPriceInDetail.text = "₹" + product.productPrice.toString()
             if (!product.availability){
                 binding.buyNowButton.isEnabled = false
                 binding.addToCartButton.isEnabled = false

@@ -18,6 +18,7 @@ import com.example.rshlnapp.daos.UserDao
 import com.example.rshlnapp.databinding.CartFragmentBinding
 import com.example.rshlnapp.models.CartItem
 import com.example.rshlnapp.models.User
+import com.example.rshlnapp.ui.choose_address.ChooseAddressFragment
 import com.example.rshlnapp.ui.detail.DetailFragment
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -46,6 +47,8 @@ class CartFragment : Fragment(), ICartAdapter {
         adapter = CartAdapter(this)
         binding.cartRecyclerView.adapter = adapter
 
+        initializeCurrentUser()
+
         viewModel.items.observe(viewLifecycleOwner,{
             adapter.notifyDataSetChanged()
         })
@@ -54,7 +57,27 @@ class CartFragment : Fragment(), ICartAdapter {
             binding.totalAmountCart.text = it
         })
 
+        binding.proceedToBuyCart.setOnClickListener {
+            proceedToCheckout()
+        }
+
         return binding.root
+    }
+
+    private fun initializeCurrentUser() {
+        GlobalScope.launch {
+            currentUser = userDao.getUserById(Utils.currentUserId).await().toObject(User::class.java)!!
+        }
+    }
+
+    private fun proceedToCheckout() {
+        val currentFragment = this
+        //get the cart from the current user
+        val cart = currentUser.cart
+        //create instance of chooseAddressFragment
+        val chooseAddressFragment = ChooseAddressFragment(currentFragment,cart)
+        //navigate using fragment manager
+        requireActivity().supportFragmentManager.beginTransaction().add(R.id.nav_host_fragment_content_main,chooseAddressFragment,getString(R.string.title_choose_address_fragment)).hide(currentFragment).commit()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

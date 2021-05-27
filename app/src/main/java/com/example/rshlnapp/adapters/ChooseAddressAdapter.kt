@@ -18,10 +18,8 @@ class ChooseAddressAdapter(
 ) : RecyclerView.Adapter<ChooseAddressAdapter.ViewHolder>() {
 
     var lastSelectedPosition = -1
-    private lateinit var context: Context
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        context = parent.context
         return ViewHolder(
             LayoutInflater.from(parent.context)
                 .inflate(R.layout.item_choose_fragment, parent, false)
