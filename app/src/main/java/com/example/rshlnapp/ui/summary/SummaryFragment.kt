@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
+import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
@@ -16,6 +17,7 @@ import com.example.rshlnapp.models.Address
 import com.example.rshlnapp.models.Cart
 import com.example.rshlnapp.models.Product
 import com.example.rshlnapp.models.User
+import com.example.rshlnapp.ui.payment.PaymentFragment
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -46,7 +48,18 @@ class SummaryFragment(
         setUpAddress()
         setupRecyclerView()
 
+        binding.continueButtonSummary.setOnClickListener {
+            //go to payment screen
+            goToPaymentFragment()
+        }
+
         return binding.root
+    }
+
+    private fun goToPaymentFragment() {
+        val currentFragment = this
+        val paymentFragment = PaymentFragment(currentFragment,currentUser,address,cart)
+        requireActivity().supportFragmentManager.beginTransaction().add(R.id.nav_host_fragment_content_main,paymentFragment,getString(R.string.title_payment_fragment)).hide(currentFragment).commit()
     }
 
     private fun setupRecyclerView() {
@@ -74,6 +87,7 @@ class SummaryFragment(
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
         requireActivity().onBackPressedDispatcher.addCallback(this,object : OnBackPressedCallback(true){
             override fun handleOnBackPressed() {
                 val currentFragment = this@SummaryFragment
@@ -81,6 +95,11 @@ class SummaryFragment(
                 (activity as MainActivity).supportActionBar?.title = "Choose an address"
             }
         })
+    }
+
+    override fun onPrepareOptionsMenu(menu: Menu) {
+        menu.findItem(R.id.action_cart).setVisible(false)
+        super.onPrepareOptionsMenu(menu)
     }
 
 }

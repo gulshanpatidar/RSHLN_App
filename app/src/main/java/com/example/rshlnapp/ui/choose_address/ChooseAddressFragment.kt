@@ -2,6 +2,7 @@ package com.example.rshlnapp.ui.choose_address
 
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
@@ -59,14 +60,14 @@ class ChooseAddressFragment(val previousFragment: Fragment, val cart: Cart) : Fr
                 Toast.makeText(requireContext(), "Please choose an address", Toast.LENGTH_SHORT)
                     .show()
             } else {
-                goToPaymentFragment(position)
+                goToSummaryFragment(position)
             }
         }
 
         return binding.root
     }
 
-    private fun goToPaymentFragment(position: Int) {
+    private fun goToSummaryFragment(position: Int) {
         val address = currentUser.addresses[position]
         val currentFragment = this
         val summaryFragment = SummaryFragment(currentFragment, currentUser, address, cart)
@@ -79,6 +80,7 @@ class ChooseAddressFragment(val previousFragment: Fragment, val cart: Cart) : Fr
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
         requireActivity().onBackPressedDispatcher.addCallback(this,
             object : OnBackPressedCallback(true) {
                 override fun handleOnBackPressed() {
@@ -92,6 +94,11 @@ class ChooseAddressFragment(val previousFragment: Fragment, val cart: Cart) : Fr
                     }
                 }
             })
+    }
+
+    override fun onPrepareOptionsMenu(menu: Menu) {
+        menu.findItem(R.id.action_cart).setVisible(false)
+        super.onPrepareOptionsMenu(menu)
     }
 
     fun setupRecyclerView() {

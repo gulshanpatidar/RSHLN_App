@@ -10,15 +10,33 @@
         tools:context=".ui.payment.PaymentFragment">
 
         <TextView
-            android:id="@+id/payment_fragment_text"
+            android:id="@+id/title_payment_fragment"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="This is Payment Fragment"
-            android:textSize="25sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:text="Choose an Payment Option -"
+            android:layout_marginTop="16dp"
+            android:layout_marginStart="16dp"/>
+
+        <RadioButton
+            android:id="@+id/cod_radio_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/title_payment_fragment"
+            android:layout_marginTop="32dp"
+            android:text="Cash on Delivery (COD)"
+            android:textSize="18sp"/>
+
+        <Button
+            android:id="@+id/place_order_button"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:text="Place Order"
+            android:textSize="18sp" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
