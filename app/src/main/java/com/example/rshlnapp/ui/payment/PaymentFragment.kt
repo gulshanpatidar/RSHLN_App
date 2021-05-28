@@ -20,6 +20,10 @@ import com.example.rshlnapp.models.Cart
 import com.example.rshlnapp.models.Order
 import com.example.rshlnapp.models.User
 import com.example.rshlnapp.ui.orderDetails.OrderDetailFragment
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -77,10 +81,15 @@ class PaymentFragment(
         )
         currentUser.cart = Cart()
         userDao.updateProfile(currentUser)
-        orderDao.placeOrder(order)
-        val currentFragment = this
-        val orderDetailsFragment = OrderDetailFragment(currentFragment)
-        requireActivity().supportFragmentManager.beginTransaction().add(R.id.nav_host_fragment_content_main,orderDetailsFragment,getString(R.string.title_order_details)).hide(currentFragment).commit()
+        GlobalScope.launch {
+            val orderId = orderDao.placeOrder(order)
+            withContext(Dispatchers.Main){
+                order.orderId = orderId
+                val currentFragment = this@PaymentFragment
+                val orderDetailsFragment = OrderDetailFragment(currentFragment,order)
+                requireActivity().supportFragmentManager.beginTransaction().add(R.id.nav_host_fragment_content_main,orderDetailsFragment,getString(R.string.title_order_details)).hide(currentFragment).commit()
+            }
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

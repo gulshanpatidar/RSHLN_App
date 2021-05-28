@@ -57,6 +57,15 @@ class CartFragment : Fragment(), ICartAdapter {
             binding.totalAmountCart.text = it
         })
 
+        viewModel.listIsEmpty.observe(viewLifecycleOwner,{
+            if (it){
+                binding.proceedToBuyCart.visibility = View.GONE
+                binding.totalAmountCart.visibility = View.GONE
+                binding.emptyCartTextview.visibility = View.VISIBLE
+                binding.totalAmountLabelCart.visibility = View.GONE
+            }
+        })
+
         binding.proceedToBuyCart.setOnClickListener {
             proceedToCheckout()
         }

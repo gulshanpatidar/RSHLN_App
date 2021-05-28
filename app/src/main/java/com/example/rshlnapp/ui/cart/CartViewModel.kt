@@ -24,6 +24,10 @@ class CartViewModel : ViewModel() {
     val subtotal: LiveData<String>
         get() = _subtotal
 
+    private val _listIsEmpty = MutableLiveData<Boolean>()
+    val listIsEmpty: LiveData<Boolean>
+        get() = _listIsEmpty
+
     private var mProducts: ArrayList<Product> = ArrayList()
     private var mItems: ArrayList<CartItem> = ArrayList()
     private val productDao = ProductDao()
@@ -50,6 +54,9 @@ class CartViewModel : ViewModel() {
             }
             withContext(Dispatchers.Main) {
                 _items.value = mItems
+                if (items.value?.size == 0) {
+                    _listIsEmpty.value = true
+                }
             }
         }
     }

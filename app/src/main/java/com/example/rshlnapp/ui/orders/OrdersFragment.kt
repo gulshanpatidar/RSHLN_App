@@ -4,45 +4,69 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
-import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
+import com.example.rshlnapp.R
+import com.example.rshlnapp.Utils
+import com.example.rshlnapp.adapters.IOrderAdapter
+import com.example.rshlnapp.adapters.OrderAdapter
+import com.example.rshlnapp.daos.OrderDao
+import com.example.rshlnapp.daos.UserDao
 import com.example.rshlnapp.databinding.FragmentOrdersBinding
+import com.example.rshlnapp.models.Order
+import com.example.rshlnapp.models.User
+import com.example.rshlnapp.ui.orderDetails.OrderDetailFragment
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 
-class OrdersFragment : Fragment() {
+class OrdersFragment : Fragment(), IOrderAdapter {
 
-    private lateinit var ordersViewModel: OrdersViewModel
-    private var _binding: FragmentOrdersBinding? = null
-
-    // This property is only valid between onCreateView and
-    // onDestroyView.
-    private val binding get() = _binding!!
+    private lateinit var binding: FragmentOrdersBinding
+    private lateinit var currentUser: User
+    private lateinit var userDao: UserDao
+    private lateinit var orderDao: OrderDao
+    private lateinit var adapter: OrderAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        ordersViewModel =
-            ViewModelProvider(this).get(OrdersViewModel::class.java)
+        binding = FragmentOrdersBinding.inflate(inflater)
+        userDao = UserDao()
+        orderDao = OrderDao()
 
-        _binding = FragmentOrdersBinding.inflate(inflater, container, false)
-        val root: View = binding.root
+        setupRecyclerView()
 
-        val textView: TextView = binding.textGallery
-        ordersViewModel.text.observe(viewLifecycleOwner, Observer {
-            textView.text = it
-        })
-        binding.button.setOnClickListener{
-            Toast.makeText(requireActivity(),"Successfully Clicked Bro",Toast.LENGTH_SHORT).show()
-        }
-        return root
+        return binding.root
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
+    private fun setupRecyclerView() {
+        GlobalScope.launch {
+            currentUser =
+                userDao.getUserById(Utils.currentUserId).await().toObject(User::class.java)!!
+            val ordersToBeSent = ArrayList<Order>()
+            val orders = currentUser.orders
+            for (item in orders) {
+                val order = orderDao.getOrderById(item).await().toObject(Order::class.java)!!
+                ordersToBeSent.add(order)
+            }
+            withContext(Dispatchers.Main) {
+                adapter = OrderAdapter(this@OrdersFragment, ordersToBeSent)
+                binding.ordersRecyclerView.adapter = adapter
+            }
+        }
+    }
+
+    override fun onOrderClicked(order: Order) {
+        val currentFragment = this
+        val orderDetailFragment = OrderDetailFragment(currentFragment, order)
+        requireActivity().supportFragmentManager.beginTransaction().add(
+            R.id.nav_host_fragment_content_main,
+            orderDetailFragment,
+            getString(R.string.title_order_details)
+        ).hide(currentFragment).commit()
     }
 }

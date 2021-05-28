@@ -28,4 +28,6 @@
     <string name="title_payment_fragment">Choose Payment Method</string>
     <string name="title_summary_fragment">Order Summary</string>
     <string name="title_order_details">Order Details</string>
+    <string name="amount_payable">Amount Payable</string>
+    <string name="shipping_address">Shipping Address-</string>
 </resources>

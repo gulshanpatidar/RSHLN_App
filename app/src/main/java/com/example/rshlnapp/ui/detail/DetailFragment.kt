@@ -1,11 +1,9 @@
 package com.example.rshlnapp.ui.detail
 
+import android.graphics.drawable.Drawable
 import android.os.Bundle
+import android.view.*
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.Menu
-import android.view.View
-import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import coil.load
@@ -34,6 +32,7 @@ class DetailFragment(val productId: String,val fromWhere: String) : Fragment() {
     private lateinit var binding: DetailFragmentBinding
     private lateinit var currentUser: User
     private lateinit var userDao: UserDao
+    private var homeButtonDrawable: Drawable? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -44,7 +43,6 @@ class DetailFragment(val productId: String,val fromWhere: String) : Fragment() {
         userDao = UserDao()
         showProductDetails(productId)
         (activity as MainActivity).supportActionBar?.title = "Product Details"
-        (activity as MainActivity).supportActionBar?.setDisplayHomeAsUpEnabled(false)
 
         //add click listener to add product to the cart
         binding.addToCartButton.setOnClickListener {
@@ -54,6 +52,8 @@ class DetailFragment(val productId: String,val fromWhere: String) : Fragment() {
         binding.buyNowButton.setOnClickListener {
             startCheckoutProcess()
         }
+
+        (activity as MainActivity).supportActionBar?.setDisplayHomeAsUpEnabled(false)
 
         return binding.root
     }

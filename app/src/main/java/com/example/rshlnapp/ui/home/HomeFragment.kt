@@ -1,11 +1,13 @@
 package com.example.rshlnapp.ui.home
 
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.util.Log
 import android.view.*
 import android.widget.TextView
 import android.widget.Toast
+import androidx.core.view.GravityCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -50,5 +52,18 @@ class HomeFragment : Fragment(), IProductAdapter {
         val productDetailFragment = DetailFragment(productId,"HomeFragment")
         requireActivity().supportFragmentManager.beginTransaction().add(R.id.nav_host_fragment_content_main,productDetailFragment,getString(R.string.title_detail_fragment)).hide(currentFragment).commit()
         (activity as MainActivity).setDrawerLocked(true)
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId==android.R.id.home){
+            (activity as MainActivity).drawerLayout.openDrawer(GravityCompat.START)
+            return true
+        }
+        return super.onOptionsItemSelected(item)
     }
 }

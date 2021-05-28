@@ -1,5 +1,6 @@
 package com.example.rshlnapp
 
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -8,7 +9,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
+import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
+import androidx.navigation.ui.NavigationUI
 import com.example.rshlnapp.databinding.ActivityMainBinding
 import com.example.rshlnapp.ui.cart.CartFragment
 import com.example.rshlnapp.ui.home.HomeFragment
@@ -16,10 +19,9 @@ import com.example.rshlnapp.ui.orders.OrdersFragment
 import com.example.rshlnapp.ui.profile.ProfileFragment
 import com.google.android.material.navigation.NavigationView
 
-lateinit var drawerLayout: DrawerLayout
-
 class MainActivity : AppCompatActivity(), DrawerLocker {
 
+    lateinit var drawerLayout: DrawerLayout
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
 
@@ -55,7 +57,7 @@ class MainActivity : AppCompatActivity(), DrawerLocker {
 //        // menu should be considered as top level destinations.
 //        appBarConfiguration = AppBarConfiguration(
 //            setOf(
-//                R.id.nav_home, R.id.nav_gallery, R.id.nav_slideshow
+//                R.id.nav_home, R.id.nav_orders, R.id.nav_profile
 //            ), drawerLayout
 //        )
 //        setupActionBarWithNavController(navController, appBarConfiguration)
@@ -113,8 +115,7 @@ class MainActivity : AppCompatActivity(), DrawerLocker {
         //here create click listener for the cart icon
         return when (item.itemId) {
             android.R.id.home -> {
-                binding.drawerLayout.openDrawer(GravityCompat.START)
-                true
+                false
             }
             R.id.action_cart -> {
 //                Toast.makeText(this,"Ruko zara sabr karo",Toast.LENGTH_LONG).show()
