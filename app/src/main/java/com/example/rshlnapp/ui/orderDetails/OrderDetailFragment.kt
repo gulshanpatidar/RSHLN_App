@@ -1,24 +1,31 @@
 package com.example.rshlnapp.ui.orderDetails
 
+import android.annotation.SuppressLint
+import android.app.AlertDialog
+import android.content.DialogInterface
 import android.os.Bundle
+import android.text.InputType
 import android.view.*
-import android.widget.Toast
+import android.widget.EditText
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.rshlnapp.MainActivity
 import com.example.rshlnapp.R
 import com.example.rshlnapp.adapters.SummaryProductAdapter
+import com.example.rshlnapp.daos.OrderDao
 import com.example.rshlnapp.databinding.OrderDetailFragmentBinding
 import com.example.rshlnapp.models.Order
+import com.example.rshlnapp.ui.OrderStatus
 import com.example.rshlnapp.ui.orders.OrdersFragment
 
-class OrderDetailFragment(val previousFragment: Fragment,val order: Order) : Fragment() {
+class OrderDetailFragment(val previousFragment: Fragment, val order: Order) : Fragment() {
 
     private lateinit var viewModel: OrderDetailViewModel
     private lateinit var binding: OrderDetailFragmentBinding
     private lateinit var adapter: SummaryProductAdapter
 
+    @SuppressLint("ResourceAsColor")
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -29,7 +36,7 @@ class OrderDetailFragment(val previousFragment: Fragment,val order: Order) : Fra
         (activity as MainActivity).supportActionBar?.title = "Order Details"
         (activity as MainActivity).supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_back)
 
-        if (order.isDelivered){
+        if (order.isDelivered) {
             binding.cancelOrderButton.isEnabled = false
         }
 
@@ -38,10 +45,6 @@ class OrderDetailFragment(val previousFragment: Fragment,val order: Order) : Fra
         }
 
         return binding.root
-    }
-
-    private fun cancelOrder() {
-        Toast.makeText(requireContext(),"Nahi hoga LOL",Toast.LENGTH_SHORT).show()
     }
 
     private fun setupRecyclerView() {
@@ -53,8 +56,10 @@ class OrderDetailFragment(val previousFragment: Fragment,val order: Order) : Fra
         binding.orderStatusOrder.text = "Order status - " + order.orderStatus.toString()
         binding.userNameAddressOrder.text = order.address.userName
         binding.phoneNumberAddressOrder.text = order.address.mobileNumber
-        binding.houseAndStreetAddressOrder.text = order.address.houseNumber + ", " + order.address.streetName
-        binding.cityPincodeAddressOrder.text = order.address.pincodeOfAddress.toString() + ", " + order.address.city
+        binding.houseAndStreetAddressOrder.text =
+            order.address.houseNumber + ", " + order.address.streetName
+        binding.cityPincodeAddressOrder.text =
+            order.address.pincodeOfAddress.toString() + ", " + order.address.city
         binding.totalAmountOrder.text = "₹" + cart.price
     }
 
@@ -65,19 +70,45 @@ class OrderDetailFragment(val previousFragment: Fragment,val order: Order) : Fra
             object : OnBackPressedCallback(true) {
                 override fun handleOnBackPressed() {
                     val currentFragment = this@OrderDetailFragment
-                    if (previousFragment is OrdersFragment){
-                        requireActivity().supportFragmentManager.beginTransaction().remove(currentFragment).show(previousFragment).commit()
+                    if (previousFragment is OrdersFragment) {
+                        requireActivity().supportFragmentManager.beginTransaction()
+                            .remove(currentFragment).show(previousFragment).commit()
                         (activity as MainActivity).supportActionBar?.title = "Your Profile"
                         (activity as MainActivity).setDrawerLocked(false)
                         (activity as MainActivity).supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_menu)
-                    }else{
+                    } else {
                         requireActivity().supportFragmentManager.beginTransaction()
                             .remove(currentFragment).show(previousFragment).commit()
                         (activity as MainActivity).supportActionBar?.title = "Choose Payment Option"
-                        //TODO: manage the backstack from here.
                     }
                 }
             })
+    }
+
+    private fun cancelOrder() {
+
+        val builder = AlertDialog.Builder(requireContext())
+        builder.setTitle("Are you sure you want to cancel order?")
+        //setup the input
+        val input = EditText(requireContext())
+        //specify some of the things
+        input.setHint("Enter the reason")
+        input.inputType = InputType.TYPE_CLASS_TEXT
+        builder.setView(input)
+
+        //setup the buttons
+        builder.setPositiveButton("Yes", DialogInterface.OnClickListener { dialog, which ->
+            val reason = input.text.toString()
+            order.orderStatus = OrderStatus.CANCELLED
+            OrderDao().updateStatus(order)
+            binding.orderStatusOrder.text = "Order status - " + order.orderStatus.toString()
+        })
+
+        builder.setNegativeButton("No",DialogInterface.OnClickListener{ dialog, which ->
+            //do nothing for now
+        })
+
+        builder.show()
     }
 
     override fun onPrepareOptionsMenu(menu: Menu) {
@@ -86,7 +117,7 @@ class OrderDetailFragment(val previousFragment: Fragment,val order: Order) : Fra
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId==android.R.id.home){
+        if (item.itemId == android.R.id.home) {
             requireActivity().onBackPressedDispatcher.onBackPressed()
         }
         return super.onOptionsItemSelected(item)

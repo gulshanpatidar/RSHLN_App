@@ -1,5 +1,6 @@
 package com.example.rshlnapp.adapters
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,14 +14,16 @@ import com.example.rshlnapp.ui.OrderStatus
 class OrderAdapter(private val clickListener: IOrderAdapter,val orders: List<Order>): RecyclerView.Adapter<OrderAdapter.ViewHolder>(){
 
     private val n = orders.size -1
+    private lateinit var context: Context
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        context = parent.context
         return ViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_order,parent,false))
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val order = orders[n - position]
-        holder.bind(order)
+        holder.bind(order,context)
         holder.itemOrder.setOnClickListener {
             clickListener.onOrderClicked(order)
         }
@@ -35,7 +38,7 @@ class OrderAdapter(private val clickListener: IOrderAdapter,val orders: List<Ord
         val productsName: TextView = itemView.findViewById(R.id.products_name_item_order)
         val orderStatus: TextView = itemView.findViewById(R.id.order_status_item_order)
 
-        fun bind(order: Order){
+        fun bind(order: Order, context: Context){
             val cartItems = order.cart.items
             var name = cartItems[0].product.productName
             for(i in 1..(cartItems.size-1)){
@@ -53,6 +56,8 @@ class OrderAdapter(private val clickListener: IOrderAdapter,val orders: List<Ord
                 }
                 OrderStatus.CANCELLED->{
                     statusString = "Order Cancelled"
+                    val color = context.resources.getColor(R.color.design_default_color_error)
+                    orderStatus.setTextColor(color)
                 }
                 OrderStatus.DELIVERED->{
                     statusString = "Order Delivered"
