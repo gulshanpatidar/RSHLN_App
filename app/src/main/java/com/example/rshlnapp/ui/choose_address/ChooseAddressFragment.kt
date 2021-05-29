@@ -1,10 +1,7 @@
 package com.example.rshlnapp.ui.choose_address
 
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.Menu
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
@@ -99,6 +96,13 @@ class ChooseAddressFragment(val previousFragment: Fragment, val cart: Cart) : Fr
     override fun onPrepareOptionsMenu(menu: Menu) {
         menu.findItem(R.id.action_cart).setVisible(false)
         super.onPrepareOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId==android.R.id.home){
+            requireActivity().onBackPressedDispatcher.onBackPressed()
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     fun setupRecyclerView() {

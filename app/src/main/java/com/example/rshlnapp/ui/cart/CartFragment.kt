@@ -2,10 +2,7 @@ package com.example.rshlnapp.ui.cart
 
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.Menu
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -41,7 +38,7 @@ class CartFragment : Fragment(), ICartAdapter {
         binding = CartFragmentBinding.inflate(inflater)
         viewModel = ViewModelProvider(this).get(CartViewModel::class.java)
         (activity as MainActivity).supportActionBar?.title = "Cart"
-        (activity as MainActivity).supportActionBar?.setDisplayHomeAsUpEnabled(false)
+        (activity as MainActivity).supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_back)
         userDao = UserDao()
         binding.viewModel = viewModel
         adapter = CartAdapter(this)
@@ -101,7 +98,7 @@ class CartFragment : Fragment(), ICartAdapter {
                         .remove(currentFragment).show(homeFragment).commit()
                     (activity as MainActivity).supportActionBar?.title = "RSHLN"
                     (activity as MainActivity).setDrawerLocked(false)
-                    (activity as MainActivity).supportActionBar?.setDisplayHomeAsUpEnabled(true)
+                    (activity as MainActivity).supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_menu)
                 }
             })
     }
@@ -109,6 +106,13 @@ class CartFragment : Fragment(), ICartAdapter {
     override fun onPrepareOptionsMenu(menu: Menu) {
         menu.findItem(R.id.action_cart).setVisible(false)
         super.onPrepareOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId==android.R.id.home){
+            requireActivity().onBackPressedDispatcher.onBackPressed()
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     override fun onProductClicked(productId: String) {

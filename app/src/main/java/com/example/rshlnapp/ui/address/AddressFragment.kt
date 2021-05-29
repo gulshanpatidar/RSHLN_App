@@ -1,10 +1,7 @@
 package com.example.rshlnapp.ui.address
 
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.Menu
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
@@ -39,7 +36,7 @@ class AddressFragment(val previousFragment: Fragment) : Fragment() {
         viewModel = ViewModelProvider(this).get(AddressViewModel::class.java)
 
         (activity as MainActivity).supportActionBar?.title = "Add new address"
-        (activity as MainActivity).supportActionBar?.setDisplayHomeAsUpEnabled(false)
+        (activity as MainActivity).supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_back)
         userDao = UserDao()
 
         binding.addAddressButton.setOnClickListener {
@@ -104,8 +101,8 @@ class AddressFragment(val previousFragment: Fragment) : Fragment() {
                         requireActivity().supportFragmentManager.beginTransaction()
                             .remove(currentFragment).show(profileFragment).commit()
                         (activity as MainActivity).supportActionBar?.title = "Your Profile"
+                        (activity as MainActivity).supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_menu)
                         (activity as MainActivity).setDrawerLocked(false)
-                        (activity as MainActivity).supportActionBar?.setDisplayHomeAsUpEnabled(true)
                     }else{
                         requireActivity().supportFragmentManager.beginTransaction().remove(currentFragment).show(previousFragment).commit()
                         (activity as MainActivity).supportActionBar?.title = "Choose an Address"
@@ -117,6 +114,13 @@ class AddressFragment(val previousFragment: Fragment) : Fragment() {
     override fun onPrepareOptionsMenu(menu: Menu) {
         menu.findItem(R.id.action_cart).isVisible = false
         super.onPrepareOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId==android.R.id.home){
+            requireActivity().onBackPressedDispatcher.onBackPressed()
+        }
+        return super.onOptionsItemSelected(item)
     }
 
 }

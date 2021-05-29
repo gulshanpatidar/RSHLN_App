@@ -2,9 +2,11 @@ package com.example.rshlnapp.ui.profile
 
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.view.GravityCompat
 import androidx.fragment.app.Fragment
 import com.example.rshlnapp.MainActivity
 import com.example.rshlnapp.R
@@ -46,6 +48,19 @@ class ProfileFragment : Fragment(), IAddressAdapter {
         setupRecyclerView()
 
         return binding.root
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId==android.R.id.home){
+            (activity as MainActivity).drawerLayout.openDrawer(GravityCompat.START)
+            return true
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     fun setupRecyclerView() {

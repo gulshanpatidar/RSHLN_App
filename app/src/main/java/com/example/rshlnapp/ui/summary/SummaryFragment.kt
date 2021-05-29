@@ -2,11 +2,8 @@ package com.example.rshlnapp.ui.summary
 
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
+import android.view.*
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.Menu
-import android.view.View
-import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import com.example.rshlnapp.MainActivity
 import com.example.rshlnapp.R
@@ -100,6 +97,13 @@ class SummaryFragment(
     override fun onPrepareOptionsMenu(menu: Menu) {
         menu.findItem(R.id.action_cart).setVisible(false)
         super.onPrepareOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId==android.R.id.home){
+            requireActivity().onBackPressedDispatcher.onBackPressed()
+        }
+        return super.onOptionsItemSelected(item)
     }
 
 }

@@ -26,13 +26,11 @@ import kotlinx.coroutines.tasks.await
 
 class DetailFragment(val productId: String,val fromWhere: String) : Fragment() {
 
-    private lateinit var viewModel: DetailViewModel
     private lateinit var productDao: ProductDao
     private lateinit var product: Product
     private lateinit var binding: DetailFragmentBinding
     private lateinit var currentUser: User
     private lateinit var userDao: UserDao
-    private var homeButtonDrawable: Drawable? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -53,7 +51,8 @@ class DetailFragment(val productId: String,val fromWhere: String) : Fragment() {
             startCheckoutProcess()
         }
 
-        (activity as MainActivity).supportActionBar?.setDisplayHomeAsUpEnabled(false)
+        //change the icon of the up button
+        (activity as MainActivity).supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_back)
 
         return binding.root
     }
@@ -106,7 +105,7 @@ class DetailFragment(val productId: String,val fromWhere: String) : Fragment() {
                     requireActivity().supportFragmentManager.beginTransaction().remove(currentFragment).show(homeFragment).commit()
                     (activity as MainActivity).supportActionBar?.title = "RSHLN"
                     (activity as MainActivity).setDrawerLocked(false)
-                    (activity as MainActivity).supportActionBar?.setDisplayHomeAsUpEnabled(true)
+                    (activity as MainActivity).supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_menu)
                 }else{
                     val cartFragment = CartFragment()
                     val currentFragment = this@DetailFragment
@@ -120,6 +119,13 @@ class DetailFragment(val productId: String,val fromWhere: String) : Fragment() {
     override fun onPrepareOptionsMenu(menu: Menu) {
         menu.findItem(R.id.action_cart).setVisible(false)
         super.onPrepareOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId==android.R.id.home){
+            requireActivity().onBackPressedDispatcher.onBackPressed()
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     private fun showProductDetails(productId: String) {

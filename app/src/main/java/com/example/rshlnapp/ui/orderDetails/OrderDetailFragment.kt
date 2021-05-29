@@ -1,10 +1,7 @@
 package com.example.rshlnapp.ui.orderDetails
 
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.Menu
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -29,7 +26,7 @@ class OrderDetailFragment(val previousFragment: Fragment,val order: Order) : Fra
         binding = OrderDetailFragmentBinding.inflate(inflater)
         setupRecyclerView()
         (activity as MainActivity).supportActionBar?.title = "Order Details"
-        (activity as MainActivity).supportActionBar?.setDisplayHomeAsUpEnabled(false)
+        (activity as MainActivity).supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_back)
 
         return binding.root
     }
@@ -59,7 +56,7 @@ class OrderDetailFragment(val previousFragment: Fragment,val order: Order) : Fra
                         requireActivity().supportFragmentManager.beginTransaction().remove(currentFragment).show(previousFragment).commit()
                         (activity as MainActivity).supportActionBar?.title = "Your Profile"
                         (activity as MainActivity).setDrawerLocked(false)
-                        (activity as MainActivity).supportActionBar?.setDisplayHomeAsUpEnabled(true)
+                        (activity as MainActivity).supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_menu)
                     }else{
                         requireActivity().supportFragmentManager.beginTransaction()
                             .remove(currentFragment).show(previousFragment).commit()
@@ -73,6 +70,13 @@ class OrderDetailFragment(val previousFragment: Fragment,val order: Order) : Fra
     override fun onPrepareOptionsMenu(menu: Menu) {
         menu.findItem(R.id.action_cart).setVisible(false)
         super.onPrepareOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId==android.R.id.home){
+            requireActivity().onBackPressedDispatcher.onBackPressed()
+        }
+        return super.onOptionsItemSelected(item)
     }
 
 }
