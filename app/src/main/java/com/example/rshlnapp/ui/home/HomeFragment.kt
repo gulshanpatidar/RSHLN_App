@@ -1,15 +1,12 @@
 package com.example.rshlnapp.ui.home
 
-import android.graphics.drawable.Drawable
 import android.os.Bundle
-import android.os.CountDownTimer
-import android.util.Log
-import android.view.*
-import android.widget.TextView
-import android.widget.Toast
+import android.view.LayoutInflater
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
 import androidx.core.view.GravityCompat
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.example.rshlnapp.MainActivity
 import com.example.rshlnapp.R
@@ -17,7 +14,6 @@ import com.example.rshlnapp.adapters.IProductAdapter
 import com.example.rshlnapp.adapters.ProductAdapter
 import com.example.rshlnapp.databinding.FragmentHomeBinding
 import com.example.rshlnapp.ui.detail.DetailFragment
-import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class HomeFragment : Fragment(), IProductAdapter {
 
@@ -38,9 +34,15 @@ class HomeFragment : Fragment(), IProductAdapter {
         adapter = ProductAdapter(this)
         binding.productsRecyclerView.adapter = adapter
 
-        homeViewModel.products.observe(viewLifecycleOwner,{
+        homeViewModel.products.observe(viewLifecycleOwner, {
             adapter.notifyDataSetChanged()
             binding.productsRecyclerView.smoothScrollToPosition(it.size)
+        })
+
+        homeViewModel.status.observe(viewLifecycleOwner,{
+            if (it==ProductStatus.DONE){
+                binding.homeFragmentProgressBar.visibility = View.GONE
+            }
         })
 
         return binding.root
@@ -49,8 +51,12 @@ class HomeFragment : Fragment(), IProductAdapter {
     override fun onProductClicked(productId: String) {
         //navigate to the product detail fragment
         val currentFragment = this
-        val productDetailFragment = DetailFragment(productId,"HomeFragment")
-        requireActivity().supportFragmentManager.beginTransaction().add(R.id.nav_host_fragment_content_main,productDetailFragment,getString(R.string.title_detail_fragment)).hide(currentFragment).commit()
+        val productDetailFragment = DetailFragment(productId, "HomeFragment")
+        requireActivity().supportFragmentManager.beginTransaction().add(
+            R.id.nav_host_fragment_content_main,
+            productDetailFragment,
+            getString(R.string.title_detail_fragment)
+        ).hide(currentFragment).commit()
         (activity as MainActivity).setDrawerLocked(true)
     }
 
@@ -60,7 +66,7 @@ class HomeFragment : Fragment(), IProductAdapter {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId==android.R.id.home){
+        if (item.itemId == android.R.id.home) {
             (activity as MainActivity).drawerLayout.openDrawer(GravityCompat.START)
             return true
         }

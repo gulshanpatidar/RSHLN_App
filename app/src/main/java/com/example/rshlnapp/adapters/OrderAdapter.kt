@@ -12,12 +12,14 @@ import com.example.rshlnapp.ui.OrderStatus
 
 class OrderAdapter(private val clickListener: IOrderAdapter,val orders: List<Order>): RecyclerView.Adapter<OrderAdapter.ViewHolder>(){
 
+    private val n = orders.size -1
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_order,parent,false))
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val order = orders[position]
+        val order = orders[n - position]
         holder.bind(order)
         holder.itemOrder.setOnClickListener {
             clickListener.onOrderClicked(order)

@@ -131,8 +131,7 @@
                 android:textSize="20sp"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/phone_number_address_order"
-                app:layout_constraintBottom_toBottomOf="parent"/>
+                app:layout_constraintTop_toBottomOf="@id/phone_number_address_order"/>
 
             <TextView
                 android:id="@+id/total_amount_order"
@@ -145,8 +144,19 @@
                 android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/phone_number_address_order"
-                app:layout_constraintBottom_toBottomOf="parent"
                 tools:text="1500" />
+
+            <Button
+                android:id="@+id/cancel_order_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/total_amount_order"
+                android:text="Cancel Order"
+                android:backgroundTint="@android:color/holo_red_dark"/>
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </ScrollView>

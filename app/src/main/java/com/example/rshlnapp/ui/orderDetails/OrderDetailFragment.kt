@@ -2,6 +2,7 @@ package com.example.rshlnapp.ui.orderDetails
 
 import android.os.Bundle
 import android.view.*
+import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -28,7 +29,19 @@ class OrderDetailFragment(val previousFragment: Fragment,val order: Order) : Fra
         (activity as MainActivity).supportActionBar?.title = "Order Details"
         (activity as MainActivity).supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_back)
 
+        if (order.isDelivered){
+            binding.cancelOrderButton.isEnabled = false
+        }
+
+        binding.cancelOrderButton.setOnClickListener {
+            cancelOrder()
+        }
+
         return binding.root
+    }
+
+    private fun cancelOrder() {
+        Toast.makeText(requireContext(),"Nahi hoga LOL",Toast.LENGTH_SHORT).show()
     }
 
     private fun setupRecyclerView() {

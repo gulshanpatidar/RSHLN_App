@@ -17,15 +17,6 @@ enum class ProductStatus{LOADING,ERROR,DONE}
 
 class HomeViewModel : ViewModel() {
 
-    private val _text = MutableLiveData<String>().apply {
-        value = "This is Home Fragment"
-    }
-    val text: LiveData<String> = _text
-
-    private val _navigateToAddProduct = MutableLiveData<Boolean>()
-    val navigateToAddProduct : LiveData<Boolean>
-        get() = _navigateToAddProduct
-
     private val _products = MutableLiveData<List<Product>>()
     val products: LiveData<List<Product>>
         get() = _products
@@ -38,11 +29,8 @@ class HomeViewModel : ViewModel() {
 
     init {
         _products.value = mProducts
+        _status.value = ProductStatus.LOADING
         retrieveAllProducts()
-    }
-
-    fun addProduct(){
-        _navigateToAddProduct.value = true
     }
 
     private fun retrieveAllProducts(){
@@ -53,7 +41,6 @@ class HomeViewModel : ViewModel() {
                 val documents = query.documents
                 for (document in documents){
                     val product = document.toObject(Product::class.java)!!
-                    _text.value = product.productName
                     mProducts.add(product)
                 }
             }catch (e: Exception){
@@ -61,6 +48,7 @@ class HomeViewModel : ViewModel() {
             }
             withContext(Dispatchers.Main){
                 _products.value = mProducts
+                _status.value = ProductStatus.DONE
             }
         }
     }
