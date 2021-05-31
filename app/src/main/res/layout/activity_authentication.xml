@@ -108,6 +108,39 @@
             android:textSize="16sp"
             android:visibility="gone"/>
 
+        <TextView
+            android:id="@+id/signUpLabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:visibility="gone"
+            android:text="You are a new user\nPlease enter your name"
+            app:layout_constraintBottom_toTopOf="@id/enter_username"/>
+
+        <EditText
+            android:id="@+id/enter_username"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp"
+            android:hint="Enter Full Name"
+            android:inputType="textPersonName"
+            android:visibility="gone"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+        <Button
+            android:id="@+id/signUpButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp"
+            android:text="Sign up"
+            android:visibility="gone"
+            app:layout_constraintTop_toBottomOf="@id/enter_username"/>
+
         <Button
             android:id="@+id/login_button_authentication"
             android:layout_width="0dp"
@@ -118,7 +151,7 @@
             android:layout_marginStart="4dp"
             app:layout_constraintStart_toEndOf="@id/guideline2"
             app:layout_constraintEnd_toEndOf="@id/enter_otp_authentication"
-            app:layout_constraintTop_toBottomOf="@id/enter_otp_authentication" />
+            app:layout_constraintTop_toBottomOf="@id/enter_otp_authentication"/>
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline2"

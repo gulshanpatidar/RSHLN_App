@@ -12,10 +12,7 @@ import com.example.rshlnapp.Utils
 import com.example.rshlnapp.daos.OrderDao
 import com.example.rshlnapp.daos.UserDao
 import com.example.rshlnapp.databinding.PaymentFragmentBinding
-import com.example.rshlnapp.models.Address
-import com.example.rshlnapp.models.Cart
-import com.example.rshlnapp.models.Order
-import com.example.rshlnapp.models.User
+import com.example.rshlnapp.models.*
 import com.example.rshlnapp.ui.orderDetails.OrderDetailFragment
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -23,12 +20,14 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.collections.ArrayList
 
 class PaymentFragment(
     val previousFragment: Fragment,
     val currentUser: User,
     val address: Address,
-    val cart: Cart
+    val cart: Cart,
+    private val cartItemsOffline: ArrayList<CartItemOffline>
 ) : Fragment() {
 
     private lateinit var viewModel: PaymentViewModel
@@ -74,7 +73,8 @@ class PaymentFragment(
             userId = Utils.currentUserId,
             orderDate = time,
             paymentMethod = "COD",
-            address = address
+            address = address,
+            createdAt = System.currentTimeMillis()
         )
         currentUser.cart = Cart()
         userDao.updateProfile(currentUser)
@@ -83,7 +83,7 @@ class PaymentFragment(
             withContext(Dispatchers.Main){
                 order.orderId = orderId
                 val currentFragment = this@PaymentFragment
-                val orderDetailsFragment = OrderDetailFragment(currentFragment,order)
+                val orderDetailsFragment = OrderDetailFragment(currentFragment,order,cartItemsOffline)
                 requireActivity().supportFragmentManager.beginTransaction().add(R.id.nav_host_fragment_content_main,orderDetailsFragment,getString(R.string.title_order_details)).hide(currentFragment).commit()
             }
         }

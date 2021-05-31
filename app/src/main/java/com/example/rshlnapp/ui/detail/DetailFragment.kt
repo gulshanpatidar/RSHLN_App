@@ -59,7 +59,7 @@ class DetailFragment(val productId: String,val fromWhere: String) : Fragment() {
 
     private fun startCheckoutProcess() {
         //we need to paas a cart to the choose address fragment, and we don't have any cart here because we want to buy a single item here. so we will create instance of cart using that single element
-        val cartItem = CartItem(productId,1,product)
+        val cartItem = CartItem(productId,product.productName,1)
         val cartItems = ArrayList<CartItem>()
         cartItems.add(cartItem)
         val cart = Cart(cartItems,product.productPrice)
@@ -82,7 +82,7 @@ class DetailFragment(val productId: String,val fromWhere: String) : Fragment() {
                     break
                 }
             }
-            val newItem = CartItem(productId,quantity)
+            val newItem = CartItem(productId,product.productName,quantity)
             cart.items.add(newItem)
             cart.price = cart.price + product.productPrice
             currentUser.cart = cart

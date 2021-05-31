@@ -15,10 +15,7 @@ import com.google.firebase.FirebaseException
 import com.google.firebase.auth.*
 import com.google.firebase.auth.PhoneAuthProvider.ForceResendingToken
 import com.google.firebase.auth.ktx.auth
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.UserDataReader
 import com.google.firebase.ktx.Firebase
-import okhttp3.internal.Util
 import java.util.concurrent.TimeUnit
 
 
@@ -67,6 +64,15 @@ class AuthenticationActivity : AppCompatActivity() {
                 signInWithPhoneAuthCredential(credential)
             }else{
                 Toast.makeText(this,"Enter OTP", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        binding.signUpButton.setOnClickListener {
+            val username = binding.enterUsername.text.trim().toString()
+            if (username.isNotEmpty()){
+                signUp(username)
+            }else{
+                Toast.makeText(this,"Enter User Name", Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -139,7 +145,6 @@ class AuthenticationActivity : AppCompatActivity() {
             .setCallbacks(callbacks) // OnVerificationStateChangedCallbacks
             .build()
         PhoneAuthProvider.verifyPhoneNumber(options)
-        Log.d("GFG" , "Auth started")
     }
 
     private fun signInWithPhoneAuthCredential(credential: PhoneAuthCredential) {
@@ -151,11 +156,7 @@ class AuthenticationActivity : AppCompatActivity() {
                     val lastSignIn = firebaseUser?.metadata?.lastSignInTimestamp
                     if (createdAt==lastSignIn){
                         //this is a new user
-                        val user = User(userId = auth.currentUser!!.uid,username = "Demo User",mobileNumber = number)
-                        UserDao().addUser(user)
-                        val intent = Intent(this , MainActivity::class.java)
-                        startActivity(intent)
-                        finish()
+                        newUser()
                     }else{
                         //it is an existing user
                         val intent = Intent(this , MainActivity::class.java)
@@ -170,6 +171,26 @@ class AuthenticationActivity : AppCompatActivity() {
                     }
                 }
             }
+    }
+
+    private fun signUp(username: String) {
+        val user = User(userId = auth.currentUser!!.uid,username = username,mobileNumber = number)
+        UserDao().addUser(user)
+        val intent = Intent(this , MainActivity::class.java)
+        startActivity(intent)
+        finish()
+    }
+
+    private fun newUser() {
+
+        binding.enterOtpAuthentication.visibility = View.GONE
+        binding.enterOtpAuthenticationLabel.visibility = View.GONE
+        binding.resendOtpButtonAuthentication.visibility = View.GONE
+        binding.resendOtpTimer.visibility = View.GONE
+        binding.loginButtonAuthentication.visibility = View.GONE
+        binding.signUpLabel.visibility = View.VISIBLE
+        binding.enterUsername.visibility = View.VISIBLE
+        binding.signUpButton.visibility = View.VISIBLE
     }
 
     private fun resendVerificationCode(

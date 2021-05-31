@@ -9,13 +9,10 @@ import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import coil.transform.RoundedCornersTransformation
 import com.example.rshlnapp.R
-import com.example.rshlnapp.models.Cart
 import com.example.rshlnapp.models.CartItem
-import org.w3c.dom.Text
+import com.example.rshlnapp.models.CartItemOffline
 
-class SummaryProductAdapter(val cart: Cart): RecyclerView.Adapter<SummaryProductAdapter.ViewHolder>() {
-
-    val items = cart.items
+class SummaryProductAdapter(val items: ArrayList<CartItemOffline>): RecyclerView.Adapter<SummaryProductAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_product_summary,parent,false))
@@ -27,7 +24,7 @@ class SummaryProductAdapter(val cart: Cart): RecyclerView.Adapter<SummaryProduct
     }
 
     override fun getItemCount(): Int {
-        return cart.items.size
+        return items.size
     }
 
     class ViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
@@ -37,7 +34,7 @@ class SummaryProductAdapter(val cart: Cart): RecyclerView.Adapter<SummaryProduct
         val productPrice: TextView = itemView.findViewById(R.id.product_price_item_summary)
         val productQty: TextView = itemView.findViewById(R.id.product_qty_item_summary)
 
-        fun bind(cartItem: CartItem){
+        fun bind(cartItem: CartItemOffline){
             productImage.load(cartItem.product.productImage){
                 transformations(RoundedCornersTransformation())
             }

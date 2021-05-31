@@ -10,10 +10,7 @@ import com.example.rshlnapp.R
 import com.example.rshlnapp.adapters.SummaryProductAdapter
 import com.example.rshlnapp.daos.ProductDao
 import com.example.rshlnapp.databinding.SummaryFragmentBinding
-import com.example.rshlnapp.models.Address
-import com.example.rshlnapp.models.Cart
-import com.example.rshlnapp.models.Product
-import com.example.rshlnapp.models.User
+import com.example.rshlnapp.models.*
 import com.example.rshlnapp.ui.payment.PaymentFragment
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -32,6 +29,7 @@ class SummaryFragment(
     private lateinit var binding: SummaryFragmentBinding
     private lateinit var productDao: ProductDao
     private lateinit var adapter: SummaryProductAdapter
+    private lateinit var cartItemsOffline: ArrayList<CartItemOffline>
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -55,19 +53,21 @@ class SummaryFragment(
 
     private fun goToPaymentFragment() {
         val currentFragment = this
-        val paymentFragment = PaymentFragment(currentFragment,currentUser,address,cart)
+        val paymentFragment = PaymentFragment(currentFragment,currentUser,address,cart,cartItemsOffline)
         requireActivity().supportFragmentManager.beginTransaction().add(R.id.nav_host_fragment_content_main,paymentFragment,getString(R.string.title_payment_fragment)).hide(currentFragment).commit()
     }
 
     private fun setupRecyclerView() {
         GlobalScope.launch {
             val items = cart.items
-            for (item in items){
+            cartItemsOffline = ArrayList()
+            for (i in 0..(items.size-1)){
+                val item = items[i]
                 val product = productDao.getProductById(item.productId).await().toObject(Product::class.java)!!
-                item.product = product
+                cartItemsOffline.add(CartItemOffline(item.productId,item.quantity,product))
             }
             withContext(Dispatchers.Main){
-                adapter = SummaryProductAdapter(cart)
+                adapter = SummaryProductAdapter(cartItemsOffline)
                 binding.productsRecyclerViewSummary.adapter = adapter
                 binding.totalAmountSummary.text = "₹" + cart.price
                 binding.payableAmountSummary.text = "₹" + cart.price

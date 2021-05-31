@@ -15,11 +15,16 @@ import com.example.rshlnapp.R
 import com.example.rshlnapp.adapters.SummaryProductAdapter
 import com.example.rshlnapp.daos.OrderDao
 import com.example.rshlnapp.databinding.OrderDetailFragmentBinding
+import com.example.rshlnapp.models.CartItemOffline
 import com.example.rshlnapp.models.Order
 import com.example.rshlnapp.ui.OrderStatus
 import com.example.rshlnapp.ui.orders.OrdersFragment
 
-class OrderDetailFragment(val previousFragment: Fragment, val order: Order) : Fragment() {
+class OrderDetailFragment(
+    val previousFragment: Fragment,
+    val order: Order,
+    val cartItemsOffline: ArrayList<CartItemOffline>
+) : Fragment() {
 
     private lateinit var viewModel: OrderDetailViewModel
     private lateinit var binding: OrderDetailFragmentBinding
@@ -36,8 +41,8 @@ class OrderDetailFragment(val previousFragment: Fragment, val order: Order) : Fr
         (activity as MainActivity).supportActionBar?.title = "Order Details"
         (activity as MainActivity).supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_back)
 
-        if (order.isDelivered) {
-            binding.cancelOrderButton.isEnabled = false
+        if (order.orderStatus==OrderStatus.PLACED || order.orderStatus==OrderStatus.APPROVED || order.orderStatus==OrderStatus.PACKED || order.orderStatus==OrderStatus.SHIPPED) {
+            binding.cancelOrderButton.isEnabled = true
         }
 
         binding.cancelOrderButton.setOnClickListener {
@@ -49,7 +54,7 @@ class OrderDetailFragment(val previousFragment: Fragment, val order: Order) : Fr
 
     private fun setupRecyclerView() {
         val cart = order.cart
-        val adapter = SummaryProductAdapter(cart)
+        val adapter = SummaryProductAdapter(cartItemsOffline)
         binding.productsRecyclerViewOrder.adapter = adapter
         binding.orderIdOrderDetails.text = "ORDER ID - " + order.orderId
         binding.orderedOnOrder.text = "Ordered " + order.orderDate
@@ -99,7 +104,7 @@ class OrderDetailFragment(val previousFragment: Fragment, val order: Order) : Fr
         //setup the buttons
         builder.setPositiveButton("Yes", DialogInterface.OnClickListener { dialog, which ->
             val reason = input.text.toString()
-            order.orderStatus = OrderStatus.CANCELLED
+            order.orderStatus = OrderStatus.CANCEL_REQUESTED
             OrderDao().updateStatus(order)
             binding.orderStatusOrder.text = "Order status - " + order.orderStatus.toString()
         })

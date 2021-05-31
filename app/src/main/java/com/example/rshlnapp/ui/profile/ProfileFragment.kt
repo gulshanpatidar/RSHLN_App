@@ -1,5 +1,6 @@
 package com.example.rshlnapp.ui.profile
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.MenuItem
@@ -8,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.view.GravityCompat
 import androidx.fragment.app.Fragment
+import com.example.rshlnapp.AuthenticationActivity
 import com.example.rshlnapp.MainActivity
 import com.example.rshlnapp.R
 import com.example.rshlnapp.Utils
@@ -19,6 +21,9 @@ import com.example.rshlnapp.models.Address
 import com.example.rshlnapp.models.User
 import com.example.rshlnapp.ui.address.AddressFragment
 import com.example.rshlnapp.ui.edit_address.EditAddressFragment
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -31,6 +36,7 @@ class ProfileFragment : Fragment(), IAddressAdapter {
     private lateinit var binding: FragmentProfileBinding
     lateinit var adapter: AddressAdapter
     private lateinit var userDao: UserDao
+    private lateinit var auth: FirebaseAuth
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -43,11 +49,22 @@ class ProfileFragment : Fragment(), IAddressAdapter {
             openAddressFragment()
         }
 
+        auth = Firebase.auth
         userDao = UserDao()
 
         setupRecyclerView()
+        binding.logOutButton.setOnClickListener {
+            logout()
+        }
 
         return binding.root
+    }
+
+    private fun logout() {
+        auth.signOut()
+        requireActivity().finish()
+        val intent = Intent(requireActivity(),AuthenticationActivity::class.java)
+        startActivity(intent)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

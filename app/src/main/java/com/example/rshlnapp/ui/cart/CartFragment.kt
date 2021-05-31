@@ -1,7 +1,6 @@
 package com.example.rshlnapp.ui.cart
 
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
@@ -14,6 +13,7 @@ import com.example.rshlnapp.adapters.ICartAdapter
 import com.example.rshlnapp.daos.UserDao
 import com.example.rshlnapp.databinding.CartFragmentBinding
 import com.example.rshlnapp.models.CartItem
+import com.example.rshlnapp.models.CartItemOffline
 import com.example.rshlnapp.models.User
 import com.example.rshlnapp.ui.choose_address.ChooseAddressFragment
 import com.example.rshlnapp.ui.detail.DetailFragment
@@ -46,16 +46,16 @@ class CartFragment : Fragment(), ICartAdapter {
 
         initializeCurrentUser()
 
-        viewModel.items.observe(viewLifecycleOwner,{
+        viewModel.items.observe(viewLifecycleOwner, {
             adapter.notifyDataSetChanged()
         })
 
-        viewModel.subtotal.observe(viewLifecycleOwner,{
+        viewModel.subtotal.observe(viewLifecycleOwner, {
             binding.totalAmountCart.text = it
         })
 
-        viewModel.listIsEmpty.observe(viewLifecycleOwner,{
-            if (it){
+        viewModel.listIsEmpty.observe(viewLifecycleOwner, {
+            if (it) {
                 binding.proceedToBuyCart.visibility = View.GONE
                 binding.totalAmountCart.visibility = View.GONE
                 binding.emptyCartTextview.visibility = View.VISIBLE
@@ -72,7 +72,8 @@ class CartFragment : Fragment(), ICartAdapter {
 
     private fun initializeCurrentUser() {
         GlobalScope.launch {
-            currentUser = userDao.getUserById(Utils.currentUserId).await().toObject(User::class.java)!!
+            currentUser =
+                userDao.getUserById(Utils.currentUserId).await().toObject(User::class.java)!!
         }
     }
 
@@ -81,9 +82,13 @@ class CartFragment : Fragment(), ICartAdapter {
         //get the cart from the current user
         val cart = currentUser.cart
         //create instance of chooseAddressFragment
-        val chooseAddressFragment = ChooseAddressFragment(currentFragment,cart)
+        val chooseAddressFragment = ChooseAddressFragment(currentFragment, cart)
         //navigate using fragment manager
-        requireActivity().supportFragmentManager.beginTransaction().add(R.id.nav_host_fragment_content_main,chooseAddressFragment,getString(R.string.title_choose_address_fragment)).hide(currentFragment).commit()
+        requireActivity().supportFragmentManager.beginTransaction().add(
+            R.id.nav_host_fragment_content_main,
+            chooseAddressFragment,
+            getString(R.string.title_choose_address_fragment)
+        ).hide(currentFragment).commit()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -109,7 +114,7 @@ class CartFragment : Fragment(), ICartAdapter {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId==android.R.id.home){
+        if (item.itemId == android.R.id.home) {
             requireActivity().onBackPressedDispatcher.onBackPressed()
         }
         return super.onOptionsItemSelected(item)
@@ -117,55 +122,63 @@ class CartFragment : Fragment(), ICartAdapter {
 
     override fun onProductClicked(productId: String) {
         val currentFragment = this
-        val productDetailFragment = DetailFragment(productId,"CartFragment")
-        requireActivity().supportFragmentManager.beginTransaction().add(R.id.nav_host_fragment_content_main,productDetailFragment,getString(R.string.title_detail_fragment)).remove(currentFragment).commit()
+        val productDetailFragment = DetailFragment(productId, "CartFragment")
+        requireActivity().supportFragmentManager.beginTransaction().add(
+            R.id.nav_host_fragment_content_main,
+            productDetailFragment,
+            getString(R.string.title_detail_fragment)
+        ).remove(currentFragment).commit()
     }
 
-    override fun onAddClicked(cartItem: CartItem) {
+    override fun onAddClicked(cartItemOffline: CartItemOffline) {
         GlobalScope.launch {
-            currentUser = userDao.getUserById(Utils.currentUserId).await().toObject(User::class.java)!!
-            for (item in currentUser.cart.items){
-                if (item.productId==cartItem.productId){
+            currentUser =
+                userDao.getUserById(Utils.currentUserId).await().toObject(User::class.java)!!
+            for (item in currentUser.cart.items) {
+                if (item.productId == cartItemOffline.productId) {
                     currentUser.cart.items.remove(item)
                     break
                 }
             }
-            cartItem.quantity += 1
-            val price = cartItem.product.productPrice
+            cartItemOffline.quantity += 1
+            val price = cartItemOffline.product.productPrice
             currentUser.cart.price += price
+            val cartItem = CartItem(cartItemOffline.productId,cartItemOffline.product.productName,cartItemOffline.quantity)
             currentUser.cart.items.add(cartItem)
             userDao.updateProfile(currentUser)
-            withContext(Dispatchers.Main){
+            withContext(Dispatchers.Main) {
                 adapter.notifyDataSetChanged()
-                binding.totalAmountCart.text = "₹"  +currentUser.cart.price.toString()
+                binding.totalAmountCart.text = "₹" + currentUser.cart.price.toString()
             }
         }
     }
 
-    override fun onDeleteClicked(cartItem: CartItem) {
+    override fun onDeleteClicked(cartItemOffline: CartItemOffline) {
         GlobalScope.launch {
-            currentUser = userDao.getUserById(Utils.currentUserId).await().toObject(User::class.java)!!
-            for (item in currentUser.cart.items){
-                if (item.productId==cartItem.productId){
+            currentUser =
+                userDao.getUserById(Utils.currentUserId).await().toObject(User::class.java)!!
+            for (item in currentUser.cart.items) {
+                if (item.productId == cartItemOffline.productId) {
                     currentUser.cart.items.remove(item)
                     break
                 }
             }
-            if (cartItem.quantity>1){
-                cartItem.quantity -= 1
-                val price = cartItem.product.productPrice
+            if (cartItemOffline.quantity > 1) {
+                cartItemOffline.quantity -= 1
+                val price = cartItemOffline.product.productPrice
                 currentUser.cart.price -= price
+                val cartItem = CartItem(cartItemOffline.productId,cartItemOffline.product.productName,cartItemOffline.quantity)
                 currentUser.cart.items.add(cartItem)
                 userDao.updateProfile(currentUser)
-            }else if(cartItem.quantity==1){
-                cartItem.quantity = 0
-                val price = cartItem.product.productPrice
+            } else if (cartItemOffline.quantity == 1) {
+                cartItemOffline.quantity = 0
+                val price = cartItemOffline.product.productPrice
                 currentUser.cart.price -= price
                 userDao.updateProfile(currentUser)
             }
-            withContext(Dispatchers.Main){
+            withContext(Dispatchers.Main) {
                 adapter.notifyDataSetChanged()
-                binding.totalAmountCart.text = "₹"  +currentUser.cart.price.toString()
+                binding.totalAmountCart.text = "₹" + currentUser.cart.price.toString()
             }
         }
     }

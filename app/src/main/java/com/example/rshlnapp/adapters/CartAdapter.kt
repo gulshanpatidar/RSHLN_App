@@ -15,9 +15,10 @@ import coil.transform.RoundedCornersTransformation
 import com.example.rshlnapp.databinding.ItemProductCartBinding
 import com.example.rshlnapp.models.CartItem
 import com.example.rshlnapp.R
+import com.example.rshlnapp.models.CartItemOffline
 
 class CartAdapter(private val clickListener: ICartAdapter) :
-    ListAdapter<CartItem, CartAdapter.ViewHolder>(DiffCallback) {
+    ListAdapter<CartItemOffline, CartAdapter.ViewHolder>(DiffCallback) {
 
 //    val cart = currentUser.cart
 //    val products = cart.products
@@ -28,7 +29,15 @@ class CartAdapter(private val clickListener: ICartAdapter) :
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val cartItem = getItem(position)
-        holder.bind(cartItem)
+        if (cartItem.quantity>0){
+            holder.bind(cartItem)
+        }else{
+            holder.bind(CartItemOffline())
+            holder.addButton.visibility = View.GONE
+            holder.deleteButton.visibility = View.GONE
+            holder.productPrice.visibility = View.GONE
+            holder.quantityView.visibility = View.GONE
+        }
         holder.addButton.setOnClickListener {
             clickListener.onAddClicked(cartItem)
         }
@@ -51,7 +60,7 @@ class CartAdapter(private val clickListener: ICartAdapter) :
         val quantityView: TextView = binding.numberOfProductsInCart
         val addButton: ImageButton = binding.addProductButtonInCart
 
-        fun bind(cartItem: CartItem) {
+        fun bind(cartItem: CartItemOffline) {
             productImage.load(cartItem.product.productImage) {
                 transformations(RoundedCornersTransformation())
             }
@@ -72,12 +81,12 @@ class CartAdapter(private val clickListener: ICartAdapter) :
         }
     }
 
-    companion object DiffCallback : DiffUtil.ItemCallback<CartItem>() {
-        override fun areItemsTheSame(oldItem: CartItem, newItem: CartItem): Boolean {
+    companion object DiffCallback : DiffUtil.ItemCallback<CartItemOffline>() {
+        override fun areItemsTheSame(oldItem: CartItemOffline, newItem: CartItemOffline): Boolean {
             return oldItem.productId == newItem.productId
         }
 
-        override fun areContentsTheSame(oldItem: CartItem, newItem: CartItem): Boolean {
+        override fun areContentsTheSame(oldItem: CartItemOffline, newItem: CartItemOffline): Boolean {
             return oldItem == newItem
         }
     }
@@ -85,6 +94,6 @@ class CartAdapter(private val clickListener: ICartAdapter) :
 
 interface ICartAdapter {
     fun onProductClicked(productId: String)
-    fun onAddClicked(cartItem: CartItem)
-    fun onDeleteClicked(cartItem: CartItem)
+    fun onAddClicked(cartItem: CartItemOffline)
+    fun onDeleteClicked(cartItem: CartItemOffline)
 }

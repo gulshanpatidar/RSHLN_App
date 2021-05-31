@@ -8,6 +8,7 @@ import com.example.rshlnapp.Utils
 import com.example.rshlnapp.daos.ProductDao
 import com.example.rshlnapp.daos.UserDao
 import com.example.rshlnapp.models.CartItem
+import com.example.rshlnapp.models.CartItemOffline
 import com.example.rshlnapp.models.Product
 import com.example.rshlnapp.models.User
 import kotlinx.coroutines.Dispatchers
@@ -16,8 +17,8 @@ import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 
 class CartViewModel : ViewModel() {
-    private val _items = MutableLiveData<List<CartItem>>()
-    val items: LiveData<List<CartItem>>
+    private val _items = MutableLiveData<List<CartItemOffline>>()
+    val items: LiveData<List<CartItemOffline>>
         get() = _items
 
     private val _subtotal = MutableLiveData<String>()
@@ -29,7 +30,7 @@ class CartViewModel : ViewModel() {
         get() = _listIsEmpty
 
     private var mProducts: ArrayList<Product> = ArrayList()
-    private var mItems: ArrayList<CartItem> = ArrayList()
+    private var mItems: ArrayList<CartItemOffline> = ArrayList()
     private val productDao = ProductDao()
     private lateinit var currentUser: User
 
@@ -49,8 +50,8 @@ class CartViewModel : ViewModel() {
                 val productId = document.productId
                 val product =
                     productDao.getProductById(productId).await().toObject(Product::class.java)!!
-                val cartItem = CartItem(productId, document.quantity, product)
-                mItems.add(cartItem)
+                val cartItemOffline = CartItemOffline(productId, document.quantity, product)
+                mItems.add(cartItemOffline)
             }
             withContext(Dispatchers.Main) {
                 _items.value = mItems

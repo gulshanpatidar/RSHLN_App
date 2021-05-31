@@ -7,6 +7,7 @@ import com.example.rshlnapp.adapters.CartAdapter
 import com.example.rshlnapp.adapters.ProductAdapter
 import com.example.rshlnapp.models.Address
 import com.example.rshlnapp.models.CartItem
+import com.example.rshlnapp.models.CartItemOffline
 import com.example.rshlnapp.models.Product
 
 @BindingAdapter("productListData")
@@ -16,7 +17,7 @@ fun bindProductRecyclerView(recyclerView: RecyclerView, data: List<Product>?){
 }
 
 @BindingAdapter("cartListData")
-fun bindCartRecyclerView(recyclerView: RecyclerView, data: List<CartItem>?){
+fun bindCartRecyclerView(recyclerView: RecyclerView, data: List<CartItemOffline>?){
     val adapter = recyclerView.adapter as CartAdapter
     adapter.submitList(data)
 }

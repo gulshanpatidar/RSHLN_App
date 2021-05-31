@@ -13,11 +13,15 @@ import com.example.rshlnapp.Utils
 import com.example.rshlnapp.adapters.IOrderAdapter
 import com.example.rshlnapp.adapters.OrderAdapter
 import com.example.rshlnapp.daos.OrderDao
+import com.example.rshlnapp.daos.ProductDao
 import com.example.rshlnapp.daos.UserDao
 import com.example.rshlnapp.databinding.FragmentOrdersBinding
+import com.example.rshlnapp.models.CartItemOffline
 import com.example.rshlnapp.models.Order
+import com.example.rshlnapp.models.Product
 import com.example.rshlnapp.models.User
 import com.example.rshlnapp.ui.orderDetails.OrderDetailFragment
+import com.google.android.gms.common.util.ArrayUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -31,6 +35,7 @@ class OrdersFragment : Fragment(), IOrderAdapter {
     private lateinit var userDao: UserDao
     private lateinit var orderDao: OrderDao
     private lateinit var adapter: OrderAdapter
+    private lateinit var productDao: ProductDao
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -40,6 +45,7 @@ class OrdersFragment : Fragment(), IOrderAdapter {
         binding = FragmentOrdersBinding.inflate(inflater)
         userDao = UserDao()
         orderDao = OrderDao()
+        productDao = ProductDao()
 
         setupRecyclerView()
 
@@ -67,6 +73,7 @@ class OrdersFragment : Fragment(), IOrderAdapter {
             val orders = currentUser.orders
             for (item in orders) {
                 val order = orderDao.getOrderById(item).await().toObject(Order::class.java)!!
+                val cart = order.cart
                 ordersToBeSent.add(order)
             }
             withContext(Dispatchers.Main) {
@@ -77,12 +84,24 @@ class OrdersFragment : Fragment(), IOrderAdapter {
     }
 
     override fun onOrderClicked(order: Order) {
-        val currentFragment = this
-        val orderDetailFragment = OrderDetailFragment(currentFragment, order)
-        requireActivity().supportFragmentManager.beginTransaction().add(
-            R.id.nav_host_fragment_content_main,
-            orderDetailFragment,
-            getString(R.string.title_order_details)
-        ).hide(currentFragment).commit()
+        val items = order.cart.items
+        GlobalScope.launch {
+            val cartItemsOffline = ArrayList<CartItemOffline>()
+            for (i in 0..(items.size-1)){
+                val item = items[i]
+                val product = productDao.getProductById(item.productId).await().toObject(Product::class.java)!!
+                val cartItemOffline = CartItemOffline(item.productId,item.quantity,product)
+                cartItemsOffline.add(cartItemOffline)
+            }
+            withContext(Dispatchers.Main){
+                val currentFragment = this@OrdersFragment
+                val orderDetailFragment = OrderDetailFragment(currentFragment, order, cartItemsOffline)
+                requireActivity().supportFragmentManager.beginTransaction().add(
+                    R.id.nav_host_fragment_content_main,
+                    orderDetailFragment,
+                    getString(R.string.title_order_details)
+                ).hide(currentFragment).commit()
+            }
+        }
     }
 }

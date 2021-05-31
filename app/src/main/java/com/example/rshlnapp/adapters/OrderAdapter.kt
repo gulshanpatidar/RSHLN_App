@@ -8,6 +8,7 @@ import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.rshlnapp.R
+import com.example.rshlnapp.daos.ProductDao
 import com.example.rshlnapp.models.Order
 import com.example.rshlnapp.ui.OrderStatus
 
@@ -40,9 +41,9 @@ class OrderAdapter(private val clickListener: IOrderAdapter,val orders: List<Ord
 
         fun bind(order: Order, context: Context){
             val cartItems = order.cart.items
-            var name = cartItems[0].product.productName
+            var name = cartItems[0].productName
             for(i in 1..(cartItems.size-1)){
-                name += ", " + cartItems[i].product.productName
+                name += ", " + cartItems[i].productName
             }
             productsName.text = name
             val status = order.orderStatus
@@ -59,6 +60,11 @@ class OrderAdapter(private val clickListener: IOrderAdapter,val orders: List<Ord
                     val color = context.resources.getColor(R.color.design_default_color_error)
                     orderStatus.setTextColor(color)
                 }
+                OrderStatus.CANCEL_REQUESTED->{
+                    statusString = "Cancellation Requested"
+                    val color = context.resources.getColor(R.color.design_default_color_error)
+                    orderStatus.setTextColor(color)
+                }
                 OrderStatus.DELIVERED->{
                     statusString = "Order Delivered"
                 }
@@ -67,9 +73,11 @@ class OrderAdapter(private val clickListener: IOrderAdapter,val orders: List<Ord
                 }
                 OrderStatus.REJECTED->{
                     statusString = "Order Rejected"
+                    val color = context.resources.getColor(R.color.design_default_color_error)
                 }
                 OrderStatus.RETURNED->{
                     statusString = "Order Returned"
+                    val color = context.resources.getColor(R.color.design_default_color_error)
                 }
                 OrderStatus.SHIPPED->{
                     statusString = "Order Shipped"
