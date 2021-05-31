@@ -11,7 +11,10 @@ import androidx.databinding.DataBindingUtil
 import com.example.rshlnapp.daos.UserDao
 import com.example.rshlnapp.databinding.ActivityAuthenticationBinding
 import com.example.rshlnapp.models.User
+import com.google.firebase.FirebaseApp
 import com.google.firebase.FirebaseException
+import com.google.firebase.appcheck.FirebaseAppCheck
+import com.google.firebase.appcheck.safetynet.SafetyNetAppCheckProviderFactory
 import com.google.firebase.auth.*
 import com.google.firebase.auth.PhoneAuthProvider.ForceResendingToken
 import com.google.firebase.auth.ktx.auth
@@ -110,6 +113,11 @@ class AuthenticationActivity : AppCompatActivity() {
 //                finish()
             }
         }
+
+        FirebaseApp.initializeApp(/*context=*/ this)
+        val firebaseAppCheck = FirebaseAppCheck.getInstance()
+        firebaseAppCheck.installAppCheckProviderFactory(
+            SafetyNetAppCheckProviderFactory.getInstance())
     }
 
     override fun onStart() {

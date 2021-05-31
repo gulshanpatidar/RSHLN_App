@@ -22,11 +22,14 @@ import com.example.rshlnapp.models.Product
 import com.example.rshlnapp.models.User
 import com.example.rshlnapp.ui.orderDetails.OrderDetailFragment
 import com.google.android.gms.common.util.ArrayUtils
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
+import java.lang.StringBuilder
 
 class OrdersFragment : Fragment(), IOrderAdapter {
 
@@ -36,6 +39,7 @@ class OrdersFragment : Fragment(), IOrderAdapter {
     private lateinit var orderDao: OrderDao
     private lateinit var adapter: OrderAdapter
     private lateinit var productDao: ProductDao
+    private lateinit var currentUserId: String
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -46,6 +50,7 @@ class OrdersFragment : Fragment(), IOrderAdapter {
         userDao = UserDao()
         orderDao = OrderDao()
         productDao = ProductDao()
+        currentUserId = Firebase.auth.currentUser!!.uid
 
         setupRecyclerView()
 
@@ -68,7 +73,7 @@ class OrdersFragment : Fragment(), IOrderAdapter {
     private fun setupRecyclerView() {
         GlobalScope.launch {
             currentUser =
-                userDao.getUserById(Utils.currentUserId).await().toObject(User::class.java)!!
+                userDao.getUserById(currentUserId).await().toObject(User::class.java)!!
             val ordersToBeSent = ArrayList<Order>()
             val orders = currentUser.orders
             for (item in orders) {

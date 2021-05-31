@@ -37,6 +37,7 @@ class ProfileFragment : Fragment(), IAddressAdapter {
     lateinit var adapter: AddressAdapter
     private lateinit var userDao: UserDao
     private lateinit var auth: FirebaseAuth
+    private val currentUserId = Firebase.auth.currentUser!!.uid
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -83,7 +84,7 @@ class ProfileFragment : Fragment(), IAddressAdapter {
     fun setupRecyclerView() {
         GlobalScope.launch {
             val currentUser =
-                userDao.getUserById(Utils.currentUserId).await().toObject(User::class.java)!!
+                userDao.getUserById(currentUserId).await().toObject(User::class.java)!!
             val addresses = currentUser.addresses
             withContext(Dispatchers.Main) {
                 adapter = AddressAdapter(addresses, this@ProfileFragment)
