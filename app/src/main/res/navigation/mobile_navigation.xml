@@ -22,4 +22,9 @@
         android:name="com.example.rshlnapp.ui.profile.ProfileFragment"
         android:label="@string/menu_profile"
         tools:layout="@layout/fragment_profile" />
+    <fragment
+        android:id="@+id/nav_helpline"
+        android:name="com.example.rshlnapp.ui.HelplineFragment"
+        android:label="@string/helpline"
+        tools:layout="@layout/fragment_helpline"/>
 </navigation>

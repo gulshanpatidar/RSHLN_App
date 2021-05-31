@@ -13,6 +13,7 @@ import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
 import com.example.rshlnapp.databinding.ActivityMainBinding
+import com.example.rshlnapp.ui.HelplineFragment
 import com.example.rshlnapp.ui.cart.CartFragment
 import com.example.rshlnapp.ui.home.HomeFragment
 import com.example.rshlnapp.ui.orders.OrdersFragment
@@ -29,6 +30,7 @@ class MainActivity : AppCompatActivity(), DrawerLocker {
     val homeFragment = HomeFragment()
     val ordersFragment = OrdersFragment()
     val profileFragment = ProfileFragment()
+    val helplineFragment = HelplineFragment()
     val fragmentManager = supportFragmentManager
     var activeFragment: Fragment = homeFragment
 
@@ -52,16 +54,6 @@ class MainActivity : AppCompatActivity(), DrawerLocker {
         drawerToggle.syncState()
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-//        val navController = findNavController(R.id.nav_host_fragment_content_main)
-//        // Passing each menu ID as a set of Ids because each
-//        // menu should be considered as top level destinations.
-//        appBarConfiguration = AppBarConfiguration(
-//            setOf(
-//                R.id.nav_home, R.id.nav_orders, R.id.nav_profile
-//            ), drawerLayout
-//        )
-//        setupActionBarWithNavController(navController, appBarConfiguration)
-//        navView.setupWithNavController(navController)
         fragmentManager.beginTransaction().apply {
             add(
                 R.id.nav_host_fragment_content_main,
@@ -73,6 +65,10 @@ class MainActivity : AppCompatActivity(), DrawerLocker {
                 ordersFragment,
                 getString(R.string.menu_orders)
             ).hide(ordersFragment)
+            add(R.id.nav_host_fragment_content_main,
+            helplineFragment,
+            getString(R.string.title_fragment_helpline)
+            ).hide(helplineFragment)
             add(R.id.nav_host_fragment_content_main, homeFragment, getString(R.string.menu_home))
         }.commit()
 
@@ -96,6 +92,13 @@ class MainActivity : AppCompatActivity(), DrawerLocker {
                     fragmentManager.beginTransaction().hide(activeFragment).show(ordersFragment)
                         .commit()
                     activeFragment = ordersFragment
+                    drawerLayout.closeDrawer(GravityCompat.START)
+                    true
+                }
+                R.id.nav_helpline->{
+                    fragmentManager.beginTransaction().hide(activeFragment).show(helplineFragment)
+                        .commit()
+                    activeFragment = helplineFragment
                     drawerLayout.closeDrawer(GravityCompat.START)
                     true
                 }
